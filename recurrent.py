@@ -48,7 +48,7 @@ for i, sentence in enumerate(sentences):
 # build the model: a single LSTM
 print('Build model...')
 model = Sequential()
-model.add(LSTM(128, input_shape=(maxlen, len(chars))))
+model.add(LSTM(64, input_shape=(maxlen, len(chars))))
 model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
 
@@ -70,9 +70,11 @@ for iteration in range(1, 60):
     print()
     print('-' * 50)
     print('Iteration', iteration)
+    # model.load_weights('./recurrent.h5')
     model.fit(x, y,
               batch_size=128,
               epochs=1)
+    model.save('./recurrent.h5')
 
     start_index = random.randint(0, len(text) - maxlen - 1)
 
