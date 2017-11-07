@@ -20,19 +20,19 @@ import sys
 # path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
 path_wiki = "full-simple-wiki.txt"
 text_wiki = open(path_wiki, encoding='utf8').read().lower()
-# path_tay = "taylor.txt"
-# text_tay = open(path_tay).read().lower()
+path_tay = "lyrics.txt"
+text_tay = open(path_tay, encoding='utf8').read().lower()
 print('simple wiki length:', len(text_wiki))
-# print('taylor swift length:', len(text_tay))
+print('taylor swift length:', len(text_tay))
 
-chars = sorted(list(set(text_wiki)))
+chars = sorted(list(set(text_wiki).union(set(text_tay))))
 print('total chars:', len(chars))
 char_indices = dict((c, i) for i, c in enumerate(chars))
 indices_char = dict((i, c) for i, c in enumerate(chars))
 
 # cut the text in semi-redundant sequences of maxlen characters
 maxlen = 40
-step = 3
+step = 20
 sentences = []
 next_chars = []
 for i in range(0, len(text_wiki) - maxlen, step):
@@ -52,7 +52,7 @@ for i, sentence in enumerate(sentences):
 # build the model: a single LSTM
 print('Build model...')
 model = Sequential()
-model.add(LSTM(64, input_shape=(maxlen, len(chars))))
+model.add(LSTM(16, input_shape=(maxlen, len(chars))))
 model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
 
