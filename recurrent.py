@@ -17,6 +17,12 @@ import numpy as np
 import random
 import sys
 
+# PARAMETERS
+maxlen = 40  # length of sentences
+step = 20  # stride to cut data at
+LSTMsize = 16  # size of LSTM layer
+densesize = 32  # size of dense layer
+
 path_wiki = "full-simple-wiki.txt"
 text_wiki = open(path_wiki, encoding='utf8').read().lower()
 path_tay = "lyrics.txt"
@@ -47,31 +53,24 @@ def vectorize_corpus(corpus, seq_len, step, num_chars, char_encoding):
     return x, y
 
 # cut the text in semi-redundant sequences of maxlen characters
-maxlen = 40
-step = 20
 x, y = vectorize_corpus(text_wiki, maxlen, step, len(chars), char_indices)
 
 
 # build the model: a single LSTM
 print('Build model...')
-model = Sequential()
-model.add(LSTM(16, input_shape=(maxlen, len(chars))))
-model.add(Dense(32))
-model.add(Dense(len(chars)))
-model.add(Activation('softmax'))
-
-optimizer = RMSprop(lr=0.01)
-model.compile(loss='categorical_crossentropy', optimizer=optimizer)
-
-taymodel = Sequential()
-# First attempt at transfer learning: freeze LSTM
-taymodel.add(LSTM(16, input_shape=(maxlen, len(chars)), trainable=False))
-taymodel.add(Dense(32))
-taymodel.add(Dense(len(chars)))
-taymodel.add(Activation('softmax'))
-
-tayopt = RMSprop(lr=0.01)
-taymodel.compile(loss='categorical_crossentropy', optimizer=tayopt)
+def buildmodel(modeltype):
+    trainable = modeltype == "wiki"
+    model = Sequential()
+    model.add(LSTM(LSTMsize, input_shape=(maxlen, len(chars)), trainable=trainable))
+    model.add(Dense(densesize))
+    model.add(Dense(len(chars)))
+    model.add(Activation('softmax'))
+    optimizer = RMSprop(lr=0.01)
+    model.compile(loss='categorical_crossentropy', optimizer=optimizer)
+    return model
+    
+model = buildmodel("wiki")
+taymodel = buildmodel("tay")
 
 
 def sample(preds, temperature=1.0):
