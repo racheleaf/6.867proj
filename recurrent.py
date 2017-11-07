@@ -17,11 +17,15 @@ import numpy as np
 import random
 import sys
 
-path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
-text = open(path).read().lower()
-print('corpus length:', len(text))
+# path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/nietzsche.txt')
+path_wiki = "full-simple-wiki.txt"
+text_wiki = open(path_wiki, encoding='utf8').read().lower()
+# path_tay = "taylor.txt"
+# text_tay = open(path_tay).read().lower()
+print('simple wiki length:', len(text_wiki))
+# print('taylor swift length:', len(text_tay))
 
-chars = sorted(list(set(text)))
+chars = sorted(list(set(text_wiki)))
 print('total chars:', len(chars))
 char_indices = dict((c, i) for i, c in enumerate(chars))
 indices_char = dict((i, c) for i, c in enumerate(chars))
@@ -31,9 +35,9 @@ maxlen = 40
 step = 3
 sentences = []
 next_chars = []
-for i in range(0, len(text) - maxlen, step):
-    sentences.append(text[i: i + maxlen])
-    next_chars.append(text[i + maxlen])
+for i in range(0, len(text_wiki) - maxlen, step):
+    sentences.append(text_wiki[i: i + maxlen])
+    next_chars.append(text_wiki[i + maxlen])
 print('nb sequences:', len(sentences))
 
 print('Vectorization...')
@@ -76,14 +80,14 @@ for iteration in range(1, 60):
               epochs=1)
     model.save('./recurrent.h5')
 
-    start_index = random.randint(0, len(text) - maxlen - 1)
+    start_index = random.randint(0, len(text_wiki) - maxlen - 1)
 
     for diversity in [0.2, 0.5, 1.0, 1.2]:
         print()
         print('----- diversity:', diversity)
 
         generated = ''
-        sentence = text[start_index: start_index + maxlen]
+        sentence = text_wiki[start_index: start_index + maxlen]
         generated += sentence
         print('----- Generating with seed: "' + sentence + '"')
         sys.stdout.write(generated)
