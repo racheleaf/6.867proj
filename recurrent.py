@@ -63,6 +63,7 @@ def buildmodel(modeltype):
     model = Sequential()
     model.add(LSTM(LSTMsize, input_shape=(maxlen, len(chars)), trainable=trainable))
     model.add(Dense(densesize))
+    model.add(Activation('relu'))
     model.add(Dense(len(chars)))
     model.add(Activation('softmax'))
     optimizer = RMSprop(lr=0.01)
