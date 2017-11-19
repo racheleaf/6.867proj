@@ -20,12 +20,12 @@ import sys
 
 # PARAMETERS
 maxlen = 40  # length of sentences
-step_song = 50  # stride to cut song data at
+step_song = 200  # stride to cut song data at
 step_tay = 3  # stride to cut tay data at
 LSTMsize = 16  # size of LSTM layer
 densesize = 32  # size of dense layer
 
-path_song = "full-simple-wiki.txt"
+path_song = "songdata_new.txt"
 text_song = open(path_song, encoding='utf8').read().lower()
 path_tay = "lyrics.txt"
 text_tay = open(path_tay, encoding='utf8').read().lower()
