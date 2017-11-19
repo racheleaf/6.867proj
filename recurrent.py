@@ -19,18 +19,19 @@ import sys
 
 # PARAMETERS
 maxlen = 40  # length of sentences
-step = 20  # stride to cut data at
+step_song = 500  # stride to cut song data at
+step_tay = 3  # stride to cut tay data at
 LSTMsize = 16  # size of LSTM layer
 densesize = 32  # size of dense layer
 
-path_wiki = "full-simple-wiki.txt"
-text_wiki = open(path_wiki, encoding='utf8').read().lower()
+path_song = "songdata.txt"
+text_song = open(path_song, encoding='utf8').read().lower()
 path_tay = "lyrics.txt"
 text_tay = open(path_tay, encoding='utf8').read().lower()
-print('simple wiki length:', len(text_wiki))
+print('simple song length:', len(text_song))
 print('taylor swift length:', len(text_tay))
 
-chars = sorted(list(set(text_wiki).union(set(text_tay))))
+chars = sorted(list(set(text_song).union(set(text_tay))))
 print('total chars:', len(chars))
 char_indices = dict((c, i) for i, c in enumerate(chars))
 indices_char = dict((i, c) for i, c in enumerate(chars))
@@ -53,13 +54,13 @@ def vectorize_corpus(corpus, seq_len, step, num_chars, char_encoding):
     return x, y
 
 # cut the text in semi-redundant sequences of maxlen characters
-x, y = vectorize_corpus(text_wiki, maxlen, step, len(chars), char_indices)
+x, y = vectorize_corpus(text_song, maxlen, step_song, len(chars), char_indices)
 
 
 # build the model: a single LSTM
 print('Build model...')
 def buildmodel(modeltype):
-    trainable = modeltype == "wiki"
+    trainable = modeltype == "song"
     model = Sequential()
     model.add(LSTM(LSTMsize, input_shape=(maxlen, len(chars)), trainable=trainable))
     model.add(Dense(densesize))
@@ -70,7 +71,7 @@ def buildmodel(modeltype):
     model.compile(loss='categorical_crossentropy', optimizer=optimizer)
     return model
     
-model = buildmodel("wiki")
+model = buildmodel("song")
 taymodel = buildmodel("tay")
 
 
@@ -128,14 +129,14 @@ def train_and_sample(model, x, y, epochs, save_as, corpus, char_encoder, char_de
                 sys.stdout.flush()
             print()
 
-train_and_sample(model, x, y, 1, 'recurrent.h5', text_wiki, char_indices, indices_char)
-for wikilayer, taylayer in zip(model.layers, taymodel.layers):
-    taylayer.set_weights(wikilayer.get_weights())
+train_and_sample(model, x, y, 10, 'recurrent.h5', text_song, char_indices, indices_char)
+for songlayer, taylayer in zip(model.layers, taymodel.layers):
+    taylayer.set_weights(songlayer.get_weights())
 
 # free memory
 del x
 del y
-del text_wiki
+del text_song
 
-x, y = vectorize_corpus(text_tay, maxlen, step, len(chars), char_indices)
-train_and_sample(model, x, y, 1, 'tay.h5', text_tay, char_indices, indices_char)
+x, y = vectorize_corpus(text_tay, maxlen, step_tay, len(chars), char_indices)
+train_and_sample(model, x, y, 10, 'tay.h5', text_tay, char_indices, indices_char)
