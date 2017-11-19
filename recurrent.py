@@ -19,11 +19,11 @@ import sys
 
 # PARAMETERS
 maxlen = 40  # length of sentences
-step = 20  # stride to cut data at
+step = 200  # stride to cut data at
 LSTMsize = 16  # size of LSTM layer
 densesize = 32  # size of dense layer
 
-path_wiki = "full-simple-wiki.txt"
+path_wiki = "songdata_new.csv"
 text_wiki = open(path_wiki, encoding='utf8').read().lower()
 path_tay = "lyrics.txt"
 text_tay = open(path_tay, encoding='utf8').read().lower()
@@ -137,5 +137,5 @@ del x
 del y
 del text_wiki
 
-x, y = vectorize_corpus(text_tay, maxlen, step, len(chars), char_indices)
+x, y = vectorize_corpus(text_tay, maxlen, 3, len(chars), char_indices)
 train_and_sample(model, x, y, 1, 'tay.h5', text_tay, char_indices, indices_char)
