@@ -20,9 +20,11 @@ def freeze_layer(layer):
 
 class TextLSTM(nn.Module):
     def __init__(self, input_size, lstm_size, output_size, n_layers=1):
-        super()
+        super().__init__()
+        self.n_layers = n_layers
+        self.hidden_size = lstm_size
         self.encoder = nn.Embedding(input_size, lstm_size)
-        self.lstm = nn.LSTM(input_size, lstm_size, n_layers)
+        self.lstm = nn.LSTM(lstm_size, lstm_size, n_layers)
         self.decoder = nn.Linear(lstm_size, output_size)
 
     def forward(self, inp, hidden):
