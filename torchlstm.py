@@ -1,4 +1,6 @@
+import torch
 from torch import nn
+from torch.autograd import Variable
 
 """
 Note on inputs:
@@ -24,4 +26,12 @@ class TextLSTM(nn.Module):
         self.decoder = nn.Linear(lstm_size, output_size)
 
     def forward(self, inp, hidden):
-        enc = self.encoder(inp.view(
+        batch_size = len(inp)
+        enc = self.encoder(inp)
+        output, hidden = self.lstm(enc.view(1, batch_size, -1), hidden)
+        output = self.decoder(output.view(batch_size, -1))
+        return output, hidden
+
+    def init_hidden(self, batch_size):
+        return (Variable(torch.zeros(self.n_layers, batch_size, self.hidden_size)),
+                Variable(torch.zeros(self.n_layers, batch_size, self.hidden_size)))
