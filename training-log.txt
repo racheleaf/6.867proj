@@ -1,0 +1,44 @@
+Trained with batches of 1000 with 200 character sequences in each batch
+lr = 0.01, Adam optimizer
+256 units per layer I think
+After training on cleaned-ish songs: song loss 1.35 I think? loss ended at 0.79 on tay
+After training on wiki: tay loss ended at 0.88 - this shows some real value to transfer learning on songs
+
+Amping up to big model (192 x 2 LSTM), on song data (lr=0.001): song loss 1.24, tay loss ??
+big model may not have converged - at this point it was almost certainly overfitting though
+
+BIG MODEL
+========
+Iteration 1000: loss = 0.5340981292724609
+Sampling with seed 'Y'
+Temperature: 0.2
+Generating with seed: Y
+You were always there when I was drowning
+That's when I could finally breathe
+And by morning gone was any trace of you
+I don"t know why but with you I'd dance in a storm in my best dress
+And I don't th
+Temperature: 0.5
+Generating with seed: Y
+You're gonna show me that I'm true and time and girl love is fall
+I want to be where you said from here
+Come for an one can I believe you here
+I wonder what you're doing right now
+I never wanted work t
+Temperature: 1
+Generating with seed: Y
+You never met meors,
+And everybody knows that,
+Oh.
+(So I don"t know her how! I see that it'n biggy day,
+And unkoff, and truth, burning like and he could fince they don't
+'Cause that son't make me still
+Temperature: 1.2
+Generating with seed: Y
+You'll've done
+There ain might break our very liar for one
+Westen and I such something thing?
+Wat's that contrush,"
+And know why touch theming, score sound and fot-b-breah.
+Ffy finly, wough it mad abou
+
