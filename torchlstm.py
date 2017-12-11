@@ -18,6 +18,10 @@ def freeze_layer(layer):
         parameter.requires_grad = False
 
 
+def trainable_params(model):
+    return (p for p in model.parameters() if p.requires_grad)
+
+
 class TextLSTM(nn.Module):
     def __init__(self, input_size, lstm_size, output_size, n_layers=1):
         super().__init__()

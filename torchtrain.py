@@ -8,7 +8,7 @@ import torch
 from torch import nn
 from torch.autograd import Variable
 
-from torchlstm import freeze_layer, TextLSTM
+from torchlstm import freeze_layer, trainable_params, TextLSTM
 from torchconfig import config
 from torchgen import generate
 
@@ -58,7 +58,7 @@ def vectorize_corpus(corpus, seq_len, step, num_chars, char_encoding):
 
 
 def buildmodel(modeltype):
-    model = TextLSTM(len(chars), LSTMsize, len(chars), 1)
+    model = TextLSTM(len(chars), LSTMsize, len(chars), config['numlayers'])
     if config['cuda']:
         model = model.cuda()
     return model
@@ -98,7 +98,7 @@ def train_step(model, optimizer, inp, target, loss_function, chunk_len, batch_si
 
 def train_and_sample(model, epochs, save_as, corpus, char_encoder, char_decoder):
     # train the model, output generated text after each iteration
-    optimizer = torch.optim.Adam(model.parameters(), lr=config['lr'])
+    optimizer = torch.optim.Adam(trainable_params(model), lr=config['lr'])
     criterion = nn.CrossEntropyLoss()
     chunk_len = config['maxlen']
     batch_size = config['batchsize']
@@ -140,14 +140,17 @@ indices_char = dict((i, c) for i, c in enumerate(chars))
 
 # build the model: a single LSTM
 print('Build model...')
-model = buildmodel("song")
+# model = buildmodel("song")
+model = torch.load('recurrent_big.pt')
+if config['cuda']:
+    model = model.cuda()
 
 
-train_and_sample(model, epochs, 'recurrent.h5', text_song, char_indices, indices_char)
+train_and_sample(model, epochs, 'recurrent_big.pt', text_song, char_indices, indices_char)
 freeze_codec(model)
 
 # free memory
 del text_song
 
 # x, y = vectorize_corpus(text_tay, maxlen, step_tay, len(chars), char_indices)
-train_and_sample(model, epochs, 'tay.h5', text_tay, char_indices, indices_char)
+train_and_sample(model, epochs, 'tay_big.pt', text_tay, char_indices, indices_char)
