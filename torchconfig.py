@@ -1,8 +1,9 @@
 config = {
         'cuda': True,
-        'lr': 0.001,
+        'numlayers': 2,
+        'lr': 0.002,
         'batchsize': 1000,
         'maxlen': 200,
-        'lstmsize': 128,
-        'epochs': 2000
+        'lstmsize': 192,
+        'epochs': 1000
 }
